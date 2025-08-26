@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Medical Calculator">
+    <meta name="format-detection" content="telephone=no">
+    <title>Medical Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .calculator-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #666;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        
+        .tab-button.active {
+            background: #007bff;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+        
+        .calculator-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+        
+        .calculator {
+            display: none;
+        }
+        
+        .calculator.active {
+            display: block;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        .result-display {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .result-group {
+            margin: 15px 0;
+        }
+        
+        .result-item {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+        }
+        
+        .clear-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 15px;
+        }
+        
+        .clear-button:hover,
+        .clear-button:active {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .calculator-container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+            
+            .input-group input {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            .tab-button {
+                font-size: 12px;
+                padding: 10px;
+            }
+        }
+        
+        @supports (-webkit-touch-callout: none) {
+            body {
+                -webkit-user-select: none;
+                -webkit-touch-callout: none;
+            }
+            
+            .input-group input {
+                font-size: 16px;
+                transform: translateZ(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="calculator-tabs">
+        <button class="tab-button active" onclick="switchTab('drip', this)">Drip Rate</button>
+        <button class="tab-button" onclick="switchTab('tinsp', this)">Tinsp</button>
+    </div>
+    
+    <div class="calculator-container">
+        <div id="drip-calculator" class="calculator active">
+            <div class="input-group">
+                <label for="volume">Volume in Bag (ml):</label>
+                <input type="number" id="volume" placeholder="Enter volume" step="any">
+            </div>
+            <div class="input-group">
+                <label for="drug">Drug in Bag (mg/mcg):</label>
+                <input type="number" id="drug" placeholder="Enter drug amount" step="any">
+            </div>
+            <div class="input-group">
+                <label for="dose">Dose (mg/mcg):</label>
+                <input type="number" id="dose" placeholder="Enter dose" step="any">
+            </div>
+            <div class="input-group">
+                <label for="time">Time (minutes):</label>
+                <input type="number" id="time" placeholder="Enter time" step="any">
+            </div>
+            <div class="input-group">
+                <label for="weight">Weight (kg) - if applicable:</label>
+                <input type="number" id="weight" placeholder="Enter weight (optional)" step="any">
+            </div>
+            <div class="input-group">
+                <label for="drip-factor">Drip Factor:</label>
+                <input type="number" id="drip-factor" placeholder="Enter drip factor" step="any">
+            </div>
+            <div class="input-group">
+                <label for="drops-min">Drops/min (optional):</label>
+                <input type="number" id="drops-min" placeholder="For reverse calculation" step="any">
+            </div>
+            
+            <div class="result-group">
+                <div class="result-item" id="drops-result">Drops/min: Enter values to calculate</div>
+                <div class="result-item" id="ml-hr-result">ml/hr: Enter values to calculate</div>
+                <div class="result-item" id="dose-result">Calculated Dose: Enter values to calculate</div>
+            </div>
+            
+            <button class="clear-button" onclick="clearDripCalculator()">Clear All</button>
+        </div>
+        
+        <div id="tinsp-calculator" class="calculator">
+            <div class="input-group">
+                <label for="rr">Respiratory Rate (RR):</label>
+                <input type="number" id="rr" placeholder="Enter RR" step="any">
+            </div>
+            <div class="input-group">
+                <label for="exp">Expiratory Time:</label>
+                <input type="number" id="exp" placeholder="Enter expiratory time" step="any">
+            </div>
+            
+            <div class="result-display" id="tinsp-result">
+                Tinsp: Enter values to calculate
+            </div>
+            
+            <button class="clear-button" onclick="clearTinspCalculator()">Clear All</button>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(calculator, element) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.calculator').forEach(calc => calc.classList.remove('active'));
+            
+            element.classList.add('active');
+            document.getElementById(calculator + '-calculator').classList.add('active');
+        }
+        
+        function calculateDrip() {
+            const volume = parseFloat(document.getElementById('volume').value);
+            const drug = parseFloat(document.getElementById('drug').value);
+            const dose = parseFloat(document.getElementById('dose').value);
+            const time = parseFloat(document.getElementById('time').value);
+            const weight = parseFloat(document.getElementById('weight').value) || 1;
+            const dripFactor = parseFloat(document.getElementById('drip-factor').value);
+            const dropsMin = parseFloat(document.getElementById('drops-min').value);
+            
+            let dropsResult = 'Drops/min: Enter values to calculate';
+            let mlHrResult = 'ml/hr: Enter values to calculate';
+            let doseResult = 'Calculated Dose: Enter values to calculate';
+            
+            if (!isNaN(volume) && !isNaN(drug) && !isNaN(time) && !isNaN(dripFactor)) {
+                if (isNaN(dropsMin)) {
+                    if (!isNaN(dose)) {
+                        const drops = (volume / drug) * (dose / time) * weight * dripFactor;
+                        dropsResult = `Drops/min: ${drops.toFixed(2)}`;
+                        
+                        const mlHr = (60 / dripFactor) * drops;
+                        mlHrResult = `ml/hr: ${mlHr.toFixed(2)}`;
+                    }
+                } else {
+                    dropsResult = `Drops/min: ${dropsMin.toFixed(2)}`;
+                    
+                    const mlHr = (60 / dripFactor) * dropsMin;
+                    mlHrResult = `ml/hr: ${mlHr.toFixed(2)}`;
+                    
+                    const calculatedDose = (dropsMin / (volume / drug) / weight / dripFactor) * time;
+                    doseResult = `Calculated Dose: ${calculatedDose.toFixed(2)}`;
+                }
+            }
+            
+            document.getElementById('drops-result').textContent = dropsResult;
+            document.getElementById('ml-hr-result').textContent = mlHrResult;
+            document.getElementById('dose-result').textContent = doseResult;
+        }
+        
+        function calculateTinsp() {
+            const rr = parseFloat(document.getElementById('rr').value);
+            const exp = parseFloat(document.getElementById('exp').value);
+            
+            if (!isNaN(rr) && !isNaN(exp) && rr > 0 && exp >= 0) {
+                const tinsp = (60 / rr) * (1 / (1 + exp));
+                document.getElementById('tinsp-result').textContent = `Tinsp: ${tinsp.toFixed(4)}`;
+            } else {
+                document.getElementById('tinsp-result').textContent = 'Tinsp: Enter valid values';
+            }
+        }
+        
+        function clearDripCalculator() {
+            document.querySelectorAll('#drip-calculator input').forEach(input => input.value = '');
+            document.getElementById('drops-result').textContent = 'Drops/min: Enter values to calculate';
+            document.getElementById('ml-hr-result').textContent = 'ml/hr: Enter values to calculate';
+            document.getElementById('dose-result').textContent = 'Calculated Dose: Enter values to calculate';
+        }
+        
+        function clearTinspCalculator() {
+            document.querySelectorAll('#tinsp-calculator input').forEach(input => input.value = '');
+            document.getElementById('tinsp-result').textContent = 'Tinsp: Enter values to calculate';
+        }
+        
+        function setupEventListeners() {
+            const dripInputs = ['volume', 'drug', 'dose', 'time', 'weight', 'drip-factor', 'drops-min'];
+            dripInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', calculateDrip);
+            });
+            
+            const tinspInputs = ['rr', 'exp'];
+            tinspInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', calculateTinsp);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            
+            document.addEventListener('touchstart', function() {}, {passive: true});
+            
+            window.addEventListener('orientationchange', function() {
+                setTimeout(function() {
+                    window.scrollTo(0, 0);
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

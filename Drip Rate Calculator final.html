@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drip Rate Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .heading {
+            font-size: 36px;
+            font-weight: bold;
+            color: #007bff;
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .calculator {
+            display: flex;
+            flex-direction: column;
+            width: 350px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .display {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            font-size: 24px;
+            text-align: center;
+            border-radius: 5px;
+            background-color: #e6ffe6; /* Light green background */
+            color: #28a745; /* Green text color */
+        }
+        .result-group {
+            margin-bottom: 15px;
+        }
+        .result-group .display {
+            background-color: #e6f7ff; /* Light blue background */
+            color: #007bff; /* Blue text color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heading">Drip Rate Calculator</div>
+        <div class="calculator">
+            <div class="input-group">
+                <label for="a">Volume in Bag (a):</label>
+                <input type="number" id="a" placeholder="Enter volume in bag" step="any">
+            </div>
+            <div class="input-group">
+                <label for="b">Drug in Bag (b):</label>
+                <input type="number" id="b" placeholder="Enter drug in bag" step="any">
+            </div>
+            <div class="input-group">
+                <label for="c">Dose (c):</label>
+                <input type="number" id="c" placeholder="Enter dose" step="any">
+            </div>
+            <div class="input-group">
+                <label for="d">Time in Min (d):</label>
+                <input type="number" id="d" placeholder="Enter time in minutes" step="any">
+            </div>
+            <div class="input-group">
+                <label for="e">Weight (e) (if applicable):</label>
+                <input type="number" id="e" placeholder="Enter weight" step="any">
+            </div>
+            <div class="input-group">
+                <label for="f">Drip Factor (f):</label>
+                <input type="number" id="f" placeholder="Enter drip factor" step="any">
+            </div>
+            <div class="input-group">
+                <label for="g">Drops/min (g) (optional):</label>
+                <input type="number" id="g" placeholder="Enter drops/min" step="any">
+            </div>
+            <div class="result-group">
+                <div class="display" id="result-g">Drops/min: Enter values to calculate</div>
+                <div class="display" id="result-mlhr">ml/hr: Enter values to calculate</div>
+                <div class="display" id="result-c">Dose (c): Enter values to calculate</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function calculate() {
+            // Get values from input fields
+            let a = parseFloat(document.getElementById('a').value);
+            let b = parseFloat(document.getElementById('b').value);
+            let c = parseFloat(document.getElementById('c').value);
+            let d = parseFloat(document.getElementById('d').value);
+            let e = parseFloat(document.getElementById('e').value) || 1; // Default to 1 if not provided
+            let f = parseFloat(document.getElementById('f').value);
+            let g = parseFloat(document.getElementById('g').value);
+
+            // Initialize result texts
+            let resultTextG = 'Drops/min: Enter values to calculate';
+            let resultTextMlHr = 'ml/hr: Enter values to calculate';
+            let resultTextC = 'Dose (c): Enter values to calculate';
+
+            // Check if all required values are provided
+            if (isNaN(a) || isNaN(b) || isNaN(d) || isNaN(f)) {
+                resultTextG = 'Error: Please fill all required fields';
+                resultTextMlHr = '';
+                resultTextC = '';
+            } else {
+                // Calculate drops/min using the formula
+                if (isNaN(g)) {
+                    g = (a / b) * (c / d) * e * f;
+                }
+                resultTextG = `Drops/min: ${g.toFixed(2)}`;
+                
+                // Calculate ml/hr using the formula
+                let mlHr = (60 / f) * g;
+                resultTextMlHr = `ml/hr: ${mlHr.toFixed(2)}`;
+                
+                // Calculate dose (c) if g is provided
+                if (!isNaN(g)) {
+                    c = (g / (a / b) / e / f) * d;
+                    resultTextC = `Dose (c): ${c.toFixed(2)}`;
+                } else {
+                    resultTextC = '';
+                }
+            }
+
+            // Update result fields
+            document.getElementById('result-g').textContent = resultTextG;
+            document.getElementById('result-mlhr').textContent = resultTextMlHr;
+            document.getElementById('result-c').textContent = resultTextC;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('a').addEventListener('input', calculate);
+            document.getElementById('b').addEventListener('input', calculate);
+            document.getElementById('c').addEventListener('input', calculate);
+            document.getElementById('d').addEventListener('input', calculate);
+            document.getElementById('e').addEventListener('input', calculate);
+            document.getElementById('f').addEventListener('input', calculate);
+            document.getElementById('g').addEventListener('input', calculate);
+        }
+
+        setupEventListeners();
+    </script>
+</body>
+</html>

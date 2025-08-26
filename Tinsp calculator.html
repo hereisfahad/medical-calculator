@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tinsp Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .heading {
+            font-size: 36px;
+            font-weight: bold;
+            color: #007bff;
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .calculator {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .display {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #ffe6e6; /* Light red background */
+            color: #dc3545; /* Red text color */
+            text-align: center;
+        }
+        .display .title {
+            font-size: 24px; /* Font size for "Tinsp" */
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .display .value {
+            font-size: 30px; /* Increased font size for value */
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .button {
+            margin: 2px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .button.operator {
+            background-color: #dc3545;
+        }
+        .button.operator:hover {
+            background-color: #c82333;
+        }
+        .button.disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heading">Tinsp Calculator</div>
+        <div class="calculator">
+            <div class="display" id="result">
+                <div class="title">Tinsp</div>
+                <div class="value" id="value">Result will appear here</div>
+            </div>
+            <div class="input-group">
+                <label for="RR">Enter RR:</label>
+                <input type="number" id="RR" placeholder="Enter RR">
+            </div>
+            <div class="input-group">
+                <label for="EXP">Enter EXP. Time:</label>
+                <input type="number" id="EXP" placeholder="Enter EXP. Time">
+            </div>
+            <div id="buttons">
+                <div class="button operator" onclick="clearFields()">Clear</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function calculate() {
+            // Get values from input fields
+            let RR = parseFloat(document.getElementById('RR').value);
+            let EXP = parseFloat(document.getElementById('EXP').value);
+            
+            // Validate inputs
+            if (isNaN(RR) || isNaN(EXP) || RR <= 0 || EXP < 0) {
+                document.getElementById('value').textContent = 'Error: Invalid input';
+                return;
+            }
+            
+            // Apply the formula (60/X) × 1/(1+Y)
+            let result = (60 / RR) * (1 / (1 + EXP));
+            
+            // Display the result
+            document.getElementById('value').textContent = result.toFixed(4);
+        }
+
+        function clearFields() {
+            document.getElementById('RR').value = '';
+            document.getElementById('EXP').value = '';
+            document.getElementById('value').textContent = 'Result will appear here';
+        }
+
+        // Attach the input event listener to the input fields
+        document.getElementById('RR').addEventListener('input', calculate);
+        document.getElementById('EXP').addEventListener('input', calculate);
+    </script>
+</body>
+</html>
